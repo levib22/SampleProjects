@@ -1,0 +1,105 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            // Compile the shell executable
+            "label": "build",
+            "type": "shell",
+            "command": "make",
+            "options": {
+                "cwd": "${workspaceFolder}/src"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            // Remove compiled code
+            "label": "clean",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "clean"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/src"
+            },
+            "problemMatcher": []
+        },
+        {
+            // Create a submission-ready tarball
+            "label": "archive",
+            "type": "shell",
+            "command": "tar",
+            "args": [
+                "--exclude='src/*.pyc'",
+                "-czvf",
+                "cs3214-cush.tar.gz",
+                "README.txt",
+                "partner.json",
+                "src/"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "dependsOn": [
+                "clean"
+            ]
+        },
+        {
+            // Run the provided autograder
+            "label": "test",
+            "command": "../tests/stdriver.py",
+            "args": [
+                "-b",
+                "-a",
+                "custom_tests.tst"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/src"
+            },
+            "dependsOn": [
+                "build"
+            ]
+        },
+        {
+            // Run interactively
+            // while tracing signals
+            "label": "strace",
+            "command": "strace",
+            "args": [
+                "-e",
+                "trace=!all",
+                "src/cush"
+            ],
+            "dependsOn": [
+                "build"
+            ],
+            "problemMatcher": []
+        },
+        {
+            // Run interactively
+            // while checking for memory leaks
+            "label": "valgrind",
+            "command": "valgrind",
+            "args": [
+                "-v",
+                "--leak-check=full",
+                "--show-leak-kinds=all",
+                "--track-origins=yes",
+                "src/cush"
+            ],
+            "dependsOn": [
+                "build"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}

@@ -1,0 +1,13 @@
+# Compiled code
+*.pyc
+
+# Debug and Test logs
+debug.in
+debug.out
+log.txt
+
+# Leftovers from tests
+.sw*
+
+# Archives
+cs3214-cush.*
